@@ -4,7 +4,6 @@ import 'package:vetpet/database/dao/aviso_dao.dart';
 import 'package:vetpet/model/vacina.dart';
 
 import '../constantes/constantes.dart';
-import '../database/dao/notificacao_dao.dart';
 import '../database/dao/pet_dao.dart';
 import '../database/dao/vacina_dao.dart';
 import '../model/aviso.dart';
@@ -82,7 +81,6 @@ class PetController extends GetxController {
   void selecionarPet(int id) {
     indexVacina.value = 0;
     indexAviso.value = 0;
-    print("Selecionar");
       if (pets.value.length > 0) {
         vacina = Vacina(0, 0,"","","","","").obs;
         //Buscando o index do pet selecionado
@@ -96,7 +94,6 @@ class PetController extends GetxController {
               globals.fotopetsel = pet.value.foto;
               globals.datanascimentopet = pet.value.datanascimento;
             }
-            print("Selecionar aaaa");
             vacinas.clear();
             _daovacina.findAllVacinas(pet.value.id).then((value) {
               vacinas.addAll(value);
@@ -205,35 +202,12 @@ class PetController extends GetxController {
     pets.clear();
   }
 
-  void apagarPet(int id) {
-    _daopet.deletePet(id);
-    pets.clear();
-    avisos.clear();
-    vacinas.clear();
-    indexLista.value -=1;
-    _daopet.findAllPets().then((value) => () {
-          pets.addAll(value);
-          if (pets.value.length > 0) {
-            pet.value = pets.value.elementAt(indexLista.value);
-            _daovacina.findAllVacinas(pet.value.id).then((value) {
-              vacinas.addAll(value);
-              if(vacinas.isNotEmpty){
-                indexVacina.value =0;
-                vacina.value = vacinas.value.elementAt(indexVacina.value);
-              }
-              update();
-            });
-            _daoaviso.findAllAvisos(pet.value.id).then((value) {
-              avisos.addAll(value);
-              aviso.value = avisos.value.elementAt(indexAviso.value);
-              update();
-            });
-          }
-          else{
-            indexLista.value = 0;
-          }
-        });
+  Future<void> apagarPet(int id) async {
+    await _daopet.deletePet(id).whenComplete(() => () {  });
+    refreshPage();
     update();
+
+
   }
 
   void atsexo(TipoSexoSel m) {
@@ -303,7 +277,6 @@ class PetController extends GetxController {
     aviso.value = Aviso(0, 0,"Nenhum Aviso Cadastrado","","","","") ;
     pet.value =Pet(0, "Nenhum Pet Cadastrado", "", "", "", "", "", "") ;
     vacina.value = Vacina(0, 0,"Nenhuma Vacina Cadastrada","","","","") ;
-    print("Refresh ");
     _daopet.findAllPets().then((value) {
       pets.addAll(value);
       if (pets.value.isNotEmpty) {

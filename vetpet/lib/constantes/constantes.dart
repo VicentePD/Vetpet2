@@ -16,6 +16,7 @@ const pattern = 'dd/MM/yyyy';
 
 const COLOR_BLACK = Color.fromRGBO(48, 47, 48, 1.0);
 const COLOR_GREY = Color.fromRGBO(141, 141, 141, 1.0);
+const COLOR_BORDER = Color.fromRGBO( 231, 147, 19, 0.74);
 
 const COLOR_WHITE = Colors.white;
 const COLOR_ORANGE = Colors.orange;

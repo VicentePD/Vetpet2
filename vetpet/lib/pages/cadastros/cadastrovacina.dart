@@ -29,11 +29,12 @@ class CadastroVacina extends StatelessWidget {
       vacinaController.selecionaVacina(  vacinaController.idvacina.value);
       buscavacina = false;
     }
+    vacinaController.controladorNomeVacina.text = '';
     return Scaffold(
         appBar: AppBar( backgroundColor: COLOR_ORANGE,
           title:  vacinaController.idvacina.value == 0
-              ? Text("Cadastrar Vacina")
-              : Text("Editar Vacina"),
+              ? const Text("Cadastrar Vacina")
+              : const Text("Editar Vacina"),
         ),
         body: SingleChildScrollView(
             child: Column(children: <Widget>[
@@ -49,7 +50,7 @@ class CadastroVacina extends StatelessWidget {
                           dica: "Vacina Aplicada",
                           icone: Icons.medical_services,
                           obrigatorio: true,
-                          listaOP: 1),
+                          listaOP: 1,list: vacinaController.list.value),
                       EditorDate(vacinaController.controladordataaplicacao,
                           rotulo: "Data da Aplicação",
                           dica: "DD/MM/YYYY",
@@ -112,16 +113,9 @@ class CadastroVacina extends StatelessWidget {
   }
 
   Future<void> _cadastrarVacina(BuildContext context) async {
-    final String nomevacina = vacinaController.controladorNomeVacina.text;
-    final String dataretorno = vacinaController.controladordataretorno.text;
-    final String dataaplicacao = vacinaController.controladordataaplicacao.text;
-    final String veterinario = vacinaController.controladorveterinario.text;
     final int idpet = globals.idpetsel;
     if (_formKey.currentState!.validate() && idpet != 0) {
       if (vacinaController.idvacina > 0) {
-        final vacina = Vacina(
-            vacinaController.idvacina.value, idpet, nomevacina, dataaplicacao,
-            dataretorno, veterinario);
         //Inativar Notificação
         vacinaController.atualiza();
         //  _daovacina.updateVacina(vacina, vacinaController.idvacina,statusNotificacaoVacina);

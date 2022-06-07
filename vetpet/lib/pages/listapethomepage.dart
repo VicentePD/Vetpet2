@@ -31,14 +31,14 @@ class ListaPetHomePage extends StatelessWidget {
       drawer: DrawerPage().buildDrawer(),
       body: RefreshIndicator(
         onRefresh: _pullRefresh,
+        color: COLOR_ORANGE,
         child: ListView(
           //  mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             //Informações do PEt
             Container(
                 decoration: BoxDecoration(
-                  border: Border.all(width: 8, color: Color.fromRGBO(
-                      231, 147, 19, 0.74)),
+                  border: Border.all(width: 8, color: COLOR_BORDER),
                   borderRadius: const BorderRadius.all(Radius.circular(8)),
                 ),
                 margin: const EdgeInsets.all(1),
@@ -67,18 +67,21 @@ class ListaPetHomePage extends StatelessWidget {
                       builder: (petController) => cardpet(petController),
                     ),
                     const SizedBox(height: 2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const SizedBox(width: 5),
-                        petAnterior(),
-                        petEditar(),
-                        incluirPet(),
-                        petlistar(),
-                        petProximo(),
-                        const SizedBox(width: 5)
-                      ],
+                    GetX<PetController>(
+                      builder: (petController) =>  Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const SizedBox(width: 5),
+                          petController.pets.value.length > 1? petAnterior():const SizedBox(width: 5) ,
+                          petEditar(),
+                          incluirPet(),
+                          petlistar(),
+                          petController.pets.value.length > 1? petProximo():const SizedBox(width: 5),
+                          const SizedBox(width: 5)
+                        ],
+                      ),
                     ),
+
                     const SizedBox(height: 5),
                   ],
                 )),
@@ -86,8 +89,7 @@ class ListaPetHomePage extends StatelessWidget {
             // Dados Vacina
             Container(
             decoration: BoxDecoration(
-            border: Border.all(width: 8, color: Color.fromRGBO(
-            231, 147, 19, 0.74)),
+            border: Border.all(width: 8, color: COLOR_BORDER),
             borderRadius: const BorderRadius.all(Radius.circular(8)),
             ),
             margin: const EdgeInsets.all(1),
@@ -112,8 +114,7 @@ class ListaPetHomePage extends StatelessWidget {
 
     Container(
     decoration: BoxDecoration(
-    border: Border.all(width: 8, color: Color.fromRGBO(
-    231, 147, 19, 0.74)),
+    border: Border.all(width: 8, color: COLOR_BORDER),
     borderRadius: const BorderRadius.all(Radius.circular(8)),
     ),
     margin: const EdgeInsets.all(1),
@@ -155,6 +156,7 @@ class ListaPetHomePage extends StatelessWidget {
   Widget petAnterior() {
     return const IconeBotao(icone: Icons.arrow_back, rotulo: "Ant.")
         .bt(() => {petController.navegaListPet(-1)});
+
   }
 
   Widget petlistar() {
@@ -249,9 +251,9 @@ class ListaPetHomePage extends StatelessWidget {
             ),
             Row(
               children: [
-                const IconeBotao(icone: Icons.arrow_back, rotulo: "Ant.").bt(() {
+                 petController.indexVacina.value >0? const IconeBotao(icone: Icons.arrow_back, rotulo: "Ant.").bt(() {
                   petController.navegaListVacina(-1);
-                }),
+                }): const Text(""),
                 const SizedBox(width: 5),
                 const IconeBotao(icone: Icons.add, rotulo: "Incluir").bt(() {
                   if(globals.idpetsel == 0){
@@ -275,9 +277,9 @@ class ListaPetHomePage extends StatelessWidget {
                   Get.toNamed('/listarVacinasPet');
                 }),
                 const SizedBox(width: 5),
-                const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {
+                petController.vacinas.value.length >1?  const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {
                   petController.navegaListVacina(1);
-                }),
+                }):const Text(""),
                 const SizedBox(width: 5),
 
               ],
@@ -311,9 +313,9 @@ class ListaPetHomePage extends StatelessWidget {
             Row(
               //  mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const IconeBotao(icone: Icons.arrow_back, rotulo: "Ant.").bt(() {
+                petController.indexAviso.value > 0 ?const IconeBotao(icone: Icons.arrow_back, rotulo: "Ant.").bt(() {
                   petController.navegaListAviso(-1);
-                }),
+                }):const Text(""),
                 const SizedBox(width: 5),
                 const IconeBotao(icone: Icons.add, rotulo: "Incluir").bt(() {
                   if(globals.idpetsel == 0){
@@ -336,9 +338,9 @@ class ListaPetHomePage extends StatelessWidget {
                   Get.toNamed('/listarAvisosPet');
                 }),
                 const SizedBox(width: 5),
-                const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {
+                petController.avisos.value.length > 1 ?const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {
                   petController.navegaListAviso(1);
-                }),
+                }):const Text(""),
                 const SizedBox(width: 5),
               ],
             ),

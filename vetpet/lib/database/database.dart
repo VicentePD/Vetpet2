@@ -1,21 +1,18 @@
 import 'dart:async';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-//import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:vetpet/database/dao/vacina_dao.dart';
-//import 'package:vetpet/model/pet.dart';
-
 import 'dao/aviso_dao.dart';
 import 'dao/notificacao_dao.dart';
 import 'dao/pet_dao.dart';
 
-//import 'dart:developer' as developer;
 
 Future<Database> getDatabase() async {
   final String path = join(await getDatabasesPath(), 'vetpet.db');
   Future<Database> db ;
   try{
+
     db = openDatabase(
       path,
       onCreate: (db, version) {
@@ -23,11 +20,13 @@ Future<Database> getDatabase() async {
         db.execute(Vacina_Dao.tableSql);
         db.execute(AvisoDao.tableSql);
         db.execute(NotificacaoDao.tableSql);
+        db.execute(NotificacaoDao.tableSql);
+        db.execute(Vacina_Dao.tablenomevacinasSql);
       },
       onUpgrade: (db, oldVersion,newVersion) async {
-        db.execute(NotificacaoDao.tableSql);
 
-      },version: 1,
+        db.execute(Vacina_Dao.tablenomevacinasSql);
+      },version: 5,
     );
     return db;
   }

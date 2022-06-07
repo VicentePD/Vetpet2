@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vetpet/model/vacina.dart';
 
@@ -16,6 +17,7 @@ class VacinaController extends GetxController  {
   Rx<Vacina> vacina = Vacina(0, 0,"","","","","").obs;
   RxInt idvacina = 0.obs;
   RxBool isChecked = false.obs;
+  RxList<DropdownMenuItem<String>> list = <DropdownMenuItem<String>>[].obs;
 
   final TextEditingController controladorNomeVacina =   TextEditingController();
   late TextEditingController controladordataaplicacao = TextEditingController();
@@ -24,7 +26,7 @@ class VacinaController extends GetxController  {
 
   final Vacina_Dao _daovacina = Vacina_Dao();
   @override
-  void onInit() {
+  void onInit()  {
     super.onInit();
     Intl.defaultLocale = 'pt_BR';
     controladordataaplicacao = TextEditingController(text: DateTime.now().format(pattern, 'pt_BR'));
@@ -32,12 +34,20 @@ class VacinaController extends GetxController  {
         text: DateTime(DateTime.now().year + 1, DateTime.now().month,
             DateTime.now().day)
             .format(pattern, 'pt_BR'));
+    buscaNomeVacinas();
 
   }
-
+  void buscaNomeVacinas(){
+    Vacina_Dao().nomeVacinas();
+     Vacina_Dao().opcoesVacinas().then((value)  {
+      if(value.isNotEmpty){
+        list.value =value;
+        update();
+      }
+    });
+  }
   void buscaVacinas(){
     vacinas.clear();
-    print("Controle Vacina ${globals.idpetsel}");
     _daovacina.findAllVacinas(globals.idpetsel).then((value) { vacinas.addAll(value) ;
      vacina.value=Vacina(0, 0,"","","","","");
       if(vacinas.value.isNotEmpty) {
