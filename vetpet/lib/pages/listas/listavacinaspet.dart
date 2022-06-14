@@ -26,7 +26,7 @@ class ListaVacinasPet extends StatelessWidget {
         appBar: AppBar(actions: [const IconeBotao( icone: Icons.add , rotulo: textoIncluir).bt(  () {
           vacinacontroller.idvacina.value = 0;
           Get.toNamed('/cadastroVacina');
-        }),],
+        }),const SizedBox(width: 8),],
           title: const Text("Lista Vacinas", semanticsLabel: "Lista Vacinas",),
           backgroundColor: COLOR_ORANGE,
         ),

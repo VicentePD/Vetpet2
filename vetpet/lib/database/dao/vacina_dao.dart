@@ -1,5 +1,4 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -84,7 +83,7 @@ class Vacina_Dao {
 
   Future<List<Vacina>> findVacinasVencendo() async {
     try {
-      DateTime dtb = DateTime.now().add(Duration(days: 30));
+      DateTime dtb = DateTime.now().add(const Duration(days: 30));
       final String dtBuscaVacina = dtb.year.toString() +
           dtb.month.toString().padLeft(2, '0') +
           dtb.day.toString().padLeft(2, '0');
@@ -110,7 +109,7 @@ class Vacina_Dao {
 
   Future<String> findPetsComVacinasVencendo() async {
     final Database db = await getDatabase();
-    DateTime dtb = DateTime.now().add(Duration(days: 30));
+    DateTime dtb = DateTime.now().add(const Duration(days: 30));
     final String dtBuscaVacina = dtb.year.toString() +
         dtb.month.toString().padLeft(2, '0') +
         dtb.day.toString().padLeft(2, '0');
@@ -151,7 +150,7 @@ class Vacina_Dao {
       final Database db = await getDatabase();
       Map<String, dynamic> petMap = _toMap(vacina);
       int idvacina = await db.insert(tablename, petMap);
-      final Notificacao notificacao = new Notificacao(0, idvacina, 0,
+      final Notificacao notificacao =  Notificacao(0, idvacina, 0,
           vacina.id_pet, vacina.dataaplicacao, "", vacina.dataretorno, 'A');
       notificacao.calculaInicio();
       NotificacaoDao().save(notificacao);
@@ -164,11 +163,11 @@ class Vacina_Dao {
   }
 
   Future<int> updateVacina(Vacina vacina, int idvacina,
-      [String StatusNotificacoa = "A"]) async {
+      [String statusnotificacoa = "A"]) async {
     try {
       final Database db = await getDatabase();
       Map<String, dynamic> petMap = _toMap(vacina);
-      final Notificacao notificacao = new Notificacao(
+      final Notificacao notificacao =  Notificacao(
           0,
           idvacina,
           0,
@@ -176,7 +175,7 @@ class Vacina_Dao {
           vacina.dataaplicacao,
           "",
           vacina.dataretorno,
-          '$StatusNotificacoa');
+          statusnotificacoa);
       notificacao.calculaInicio();
       NotificacaoDao().updateNotificacaoVacina(notificacao, idvacina);
       return db
@@ -250,7 +249,7 @@ class Vacina_Dao {
   }
 
   Map<String, dynamic> _toMap(Vacina vacina) {
-    final Map<String, dynamic> vacinaMap = Map();
+    final Map<String, dynamic> vacinaMap = {};
     vacinaMap[_id_pet] = vacina.id_pet;
     vacinaMap[_nome_vacina] = vacina.nome_vacina;
     vacinaMap[_dataaplicacao] = vacina.dataaplicacao;
@@ -270,7 +269,7 @@ class Vacina_Dao {
           "from $tablename,$tablenamePet where $tablename.id = $id and $tablename.id_pet = $tablenamePet.id  "
           "ORDER BY $_dataretorno DESC");
       for (Map<String, dynamic> row in result) {
-        DateTime dt = new DateFormat('dd/MM/yyyy HH:mm:ss').parse(
+        DateTime dt =  DateFormat('dd/MM/yyyy HH:mm:ss').parse(
             row[_dataretorno].toString() +
                 ' ' +
                 DateTime.now().hour.toString() +
@@ -295,19 +294,19 @@ class Vacina_Dao {
     final Database db = await getDatabase();
     final List<Map<String, dynamic>> result = await db.rawQuery(
         "SELECT distinct $_nome_vacina vacina from $tablenamevacinas");
-    List<DropdownMenuItem<String>> _Options = [];
-    _Options.add(const DropdownMenuItem<String>(
+    List<DropdownMenuItem<String>> _options = [];
+    _options.add(const DropdownMenuItem<String>(
       value: '',
       child: Text('Selecione a Vacina'),
     ));
     for (Map<String, dynamic> row in result) {
-      _Options.add(DropdownMenuItem<String>(
+      _options.add(DropdownMenuItem<String>(
         value: row['vacina'].toString(),
         child: Text(row['vacina'].toString()),
       ));
     }
-    developer.log(_Options.length.toString());
-    return _Options;
+    developer.log(_options.length.toString());
+    return _options;
   }
 
   Future<void> nomeVacinas() async {
@@ -316,12 +315,12 @@ class Vacina_Dao {
           FirebaseFirestore.instance.collection('nomevacinas');
       await nomevacinas.get().then((QuerySnapshot querySnapshot) async {
         final Database db = await getDatabase();
-        await db.rawQuery('DELETE  FROM ${tablenamevacinas}');
-        querySnapshot.docs.forEach((doc) {
-          final Map<String, String> nomevacinaMap = Map();
+        await db.rawQuery('DELETE  FROM $tablenamevacinas');
+        for (var doc in querySnapshot.docs) {
+          final Map<String, String> nomevacinaMap = {};
           nomevacinaMap[_nome_vacina] = doc['nomeVacina'];
           db.insert(tablenamevacinas, nomevacinaMap);
-        });
+        }
       });
     } catch (e, s) {
       FirebaseCrashlytics.instance

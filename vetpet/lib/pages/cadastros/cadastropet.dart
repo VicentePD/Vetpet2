@@ -1,13 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:vetpet/componentes/editordate.dart';
 import 'package:vetpet/componentes/editortexto.dart';
-import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:dart_date/dart_date.dart';
-import 'package:vetpet/model//globals.dart';
 import 'package:vetpet/help/imagemutil.dart';
 import 'package:vetpet/model/pet.dart';
 import 'package:get/get.dart';
@@ -34,8 +31,11 @@ Widget build(BuildContext context) {
       TextEditingController(text: DateTime.now().format(pattern, 'pt_BR'));
    int id = int.parse(Get.arguments[0]['idpet'].toString());
   if(id >0 && buscapet )
-  {_selectpet(id);
-  buscapet = false;}
+  {
+    _selectpet(id);
+    buscapet = false;
+  }
+
   return Scaffold(
       appBar: AppBar(  backgroundColor: COLOR_ORANGE,
         title:id ==0 ?const Text(textoCadastrarPet,semanticsLabel: textoCadastrarPet,):
@@ -52,16 +52,18 @@ Widget build(BuildContext context) {
                   onTap: () {
                     _showPicker(context);
                   },
-                  child:CircleAvatar(
-                    radius: 55,
-                    backgroundColor: const Color(0xffFDCF09),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(55),
-                        child:petController.imgString.isEmpty?  Image.asset("asset/images/_MG_9521.jpg"):
-                        ImageUtility.imageFromBase64String(petController.imgString.value)
-                    ),
+                  child:GetX<PetController>(
+                      builder: (petController) =>  CircleAvatar(
+                        backgroundImage: ImageUtility.imageFromBase64String(petController.imgString.value).image,
+                        radius: 60,
+                        backgroundColor: const Color(0xffFDCF09),
+                      ),
+                  ),
 
-                  ),),
+
+
+
+                  ),
               ),]),
               EditorTexto(petController.controladorNome,
                   rotulo: "Nome",
@@ -177,16 +179,7 @@ _deletePet(BuildContext context){
 
   }
 }
-_selectimg(String source) async {
 
-  ImageUtility.recuperaIMG(source).then((value) =>()
-  {
-      final XFile? pickedImage = value ;
-      final File pickedImageFile = File(pickedImage!.path);
-      petController.imgString.value =  ImageUtility.base64String(pickedImageFile.readAsBytesSync());
-
-  });
-}
 _selectpet(int id) async {
 
   petController.editarPet(id);
@@ -202,15 +195,15 @@ void _showPicker(context) {
                   leading:  const Icon(Icons.photo_library),
                   title:  const Text('Galeria de Photo',semanticsLabel: "Galeria de Fotos",),
                   onTap: () {
-                    _selectimg("Galeria");
-                    Navigator.of(context).pop();
+                    petController.getImage("Galeria");
+                    Get.back();
                   }),
                ListTile(
                 leading:  const Icon(Icons.photo_camera),
                 title:  const Text('Camera',semanticsLabel: "Camera"),
                 onTap: () {
-                  _selectimg("Camera");
-                  Navigator.of(context).pop();
+                  petController.getImage("Camera");
+                  Get.back();
                 },
               ),
             ],

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -36,8 +35,9 @@ class PetDao extends ChangeNotifier{
 
   Future<List<Pet>> findAllPets() async {
     final Database db = await getDatabase();
+
     final List<Map<String, dynamic>> result = await db.query(tablename);
-    List<Pet> pets = _toList(result);
+    List<Pet>  pets = _toList(result);
     return pets;
   }
   Future<Pet> findPet(int id) async {

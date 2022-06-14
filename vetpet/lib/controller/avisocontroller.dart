@@ -2,11 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:vetpet/database/dao/aviso_dao.dart';
 import 'package:vetpet/model/aviso.dart';
-import 'package:vetpet/model/vacina.dart';
+
 
 import '../constantes/constantes.dart';
 import '../database/dao/notificacao_dao.dart';
-import '../database/dao/vacina_dao.dart';
 
 import 'package:dart_date/dart_date.dart';
 import 'package:intl/intl.dart';
@@ -32,7 +31,7 @@ class AvisoController extends GetxController  {
     controladordatacadastro =
         TextEditingController(text: DateTime.now().format(pattern, 'pt_BR'));
     controladordataaviso = TextEditingController(
-        text: DateTime(DateTime.now().year + 1, DateTime.now().month,
+        text: DateTime(DateTime.now().month + 1, DateTime.now().month,
             DateTime.now().day)
             .format(pattern, 'pt_BR'));
 
@@ -42,8 +41,8 @@ class AvisoController extends GetxController  {
     avisos.clear();
     _daoaviso.findAllAvisos(globals.idpetsel).then((value) { avisos.addAll(value) ;
      aviso.value=Aviso(0, 0,"","","","","");
-      if(avisos.value.isNotEmpty) {
-        aviso.value = avisos.value.last;
+      if(avisos.isNotEmpty) {
+        aviso.value = avisos.last;
       }
       update(); }  );
   }

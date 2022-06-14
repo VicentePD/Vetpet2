@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:vetpet/database/dao/aviso_dao.dart';
@@ -6,12 +8,17 @@ import 'package:vetpet/model/vacina.dart';
 import '../constantes/constantes.dart';
 import '../database/dao/pet_dao.dart';
 import '../database/dao/vacina_dao.dart';
+import '../help/imagemutil.dart';
 import '../model/aviso.dart';
 import '../model/pet.dart';
 import '../model/vacina.dart';
 import '../model/globals.dart' as globals;
 import 'package:intl/intl.dart';
 import 'package:dart_date/dart_date.dart';
+
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 class PetController extends GetxController {
   final TextEditingController controladorNome = TextEditingController();
   final TextEditingController controladorRaca = TextEditingController();
@@ -44,21 +51,22 @@ class PetController extends GetxController {
     controladordatanascimento = TextEditingController(text: DateTime.now().format(pattern, 'pt_BR'));
     _daopet.findAllPets().then((value) {
       pets.addAll(value);
-      if (pets.value.isNotEmpty) {
-        pet.value = pets.value.elementAt(indexLista.value);
+      if (pets.isNotEmpty) {
+        pet.value = pets.elementAt(indexLista.value);
+        imgString.value = pet.value.foto;
         _daovacina.findAllVacinas(pet.value.id).then((value) {
           vacinas.addAll(value);
-          if(vacinas.value.isNotEmpty )
+          if(vacinas.isNotEmpty )
           {
-              vacina.value = vacinas.value.first;
+              vacina.value = vacinas.first;
           }
           update();
         });
         _daoaviso.findAllAvisos(pet.value.id).then((value) {
           avisos.addAll(value);
-          if(avisos.value.isNotEmpty )
+          if(avisos.isNotEmpty )
           {
-            aviso.value = avisos.value.first;
+            aviso.value = avisos.first;
           }
 
           update();
@@ -67,27 +75,31 @@ class PetController extends GetxController {
     });
   }
 
-  void limparcamposForm() {
+ limparcamposForm()  {
     controladorNome.text = "";
     controladordatanascimento.text = "";
     controladorpelagem.text = "";
     controladortipo.text = "";
     controladorRaca.text = "";
-
     imgString.value = "";
+  /*    rootBundle.load("asset/images/_MG_9521.jpg").then((value) => () {
+      imgString.value = ImageUtility.base64String( value.buffer.asUint8List());
+      print(ImageUtility.base64String( value.buffer.asUint8List()));
+      update();
+    });*/
     update();
   }
 
   void selecionarPet(int id) {
     indexVacina.value = 0;
     indexAviso.value = 0;
-      if (pets.value.length > 0) {
+      if (pets.length > 0) {
         vacina = Vacina(0, 0,"","","","","").obs;
         //Buscando o index do pet selecionado
-        for( int i = 0 ;i < pets.value.length ; i++) {
-          if( pets.value.elementAt(i).id == id){
+        for( int i = 0 ;i < pets.length ; i++) {
+          if( pets.elementAt(i).id == id){
             indexLista.value = i;
-            pet.value = pets.value.elementAt(indexLista.value);
+            pet.value = pets.elementAt(indexLista.value);
             if (globals.idpetsel != pet.value.id) {
               globals.idpetsel = pet.value.id;
               globals.nomepetsel = pet.value.nome;
@@ -97,16 +109,16 @@ class PetController extends GetxController {
             vacinas.clear();
             _daovacina.findAllVacinas(pet.value.id).then((value) {
               vacinas.addAll(value);
-              if(vacinas.value.isNotEmpty){
-                vacina.value = vacinas.value.elementAt(indexVacina.value);
+              if(vacinas.isNotEmpty){
+                vacina.value = vacinas.elementAt(indexVacina.value);
               }
               update();
             });
             avisos.clear();
             _daoaviso.findAllAvisos(pet.value.id).then((value) {
               avisos.addAll(value);
-              if(avisos.value.isNotEmpty){
-                aviso.value = avisos.value.elementAt(indexAviso.value);
+              if(avisos.isNotEmpty){
+                aviso.value = avisos.elementAt(indexAviso.value);
               }
               update();
             });
@@ -153,8 +165,8 @@ class PetController extends GetxController {
     pets.clear();
     _daopet.findAllPets().then((value) {
       pets.addAll(value);
-      pet.value =  pets.value.last;
-      indexLista.value = pets.value.length -1;
+      pet.value =  pets.last;
+      indexLista.value = pets.length -1;
       indexVacina.value =0;
       indexAviso.value = 0;
       if (globals.idpetsel != pet.value.id) {
@@ -201,13 +213,22 @@ class PetController extends GetxController {
   void reset() {
     pets.clear();
   }
+void getImage(String source) async{
+  final XFile? pickedFile = await  ImagePicker().pickImage(
+    source: source == "Camera" ? ImageSource.camera : ImageSource.gallery,
+    imageQuality: 3,
+  ) ;
+  final File pickedImageFile = File(pickedFile!.path);
+  imgString.value =  ImageUtility.base64String(pickedImageFile.readAsBytesSync());
+ // print(imgString.value);
+      update();
 
+  }
   Future<void> apagarPet(int id) async {
     await _daopet.deletePet(id).whenComplete(() => () {  });
+    navegaListPet(-1);
     refreshPage();
     update();
-
-
   }
 
   void atsexo(TipoSexoSel m) {
@@ -217,19 +238,20 @@ class PetController extends GetxController {
 
   void navegaListPet(int i) {
     indexLista.value += i;
-    if ((pets.value.length - 1) < indexLista.value) {
-      indexLista.value = pets.value.length - 1;
+    if ((pets.length - 1) < indexLista.value) {
+      indexLista.value = pets.length - 1;
     } else if (indexLista.value < 0) {
       indexLista.value = 0;
     }
-    pet.value = pets.value.elementAt(indexLista.value);
+    pet.value = pets.elementAt(indexLista.value);
+    imgString.value = pet.value.foto;
     vacinas.clear();
     vacina.value = Vacina(0, 0,"Nenhuma Vacina Cadastrada!","","","","");
     _daovacina.findAllVacinas(pet.value.id).then((value) {
       vacinas.addAll(value);
       if(vacinas.isNotEmpty){
         indexVacina.value =0;
-        vacina.value = vacinas.value.elementAt(indexVacina.value);
+        vacina.value = vacinas.elementAt(indexVacina.value);
       }
       update();
     });
@@ -237,9 +259,9 @@ class PetController extends GetxController {
     aviso.value = Aviso(0, 0,"Nenhuma Aviso Cadastrado!","","","","");
     _daoaviso.findAllAvisos(pet.value.id).then((value) {
       avisos.addAll(value);
-      if(avisos.value.isNotEmpty)
+      if(avisos.isNotEmpty)
       {
-        aviso.value = avisos.value.elementAt(indexAviso.value);
+        aviso.value = avisos.elementAt(indexAviso.value);
       }
 
       update();
@@ -248,14 +270,14 @@ class PetController extends GetxController {
   }
   void navegaListVacina(int i) {
     indexVacina.value += i;
-    if ((vacinas.value.length - 1) < indexVacina.value) {
-      indexVacina.value = vacinas.value.length - 1;
+    if ((vacinas.length - 1) < indexVacina.value) {
+      indexVacina.value = vacinas.length - 1;
     } else if (indexVacina.value < 0) {
       indexVacina.value = 0;
     }
-    if(vacinas.value.isNotEmpty)
+    if(vacinas.isNotEmpty)
     {
-      vacina.value = vacinas.value.elementAt(indexVacina.value);
+      vacina.value = vacinas.elementAt(indexVacina.value);
     }
      update();
   }
@@ -265,7 +287,7 @@ class PetController extends GetxController {
       vacinas.addAll(value);
       if(vacinas.isNotEmpty){
         indexVacina.value =0;
-        vacina.value = vacinas.value.elementAt(indexVacina.value);
+        vacina.value = vacinas.elementAt(indexVacina.value);
       }
       update();
     });
@@ -279,26 +301,26 @@ class PetController extends GetxController {
     vacina.value = Vacina(0, 0,"Nenhuma Vacina Cadastrada","","","","") ;
     _daopet.findAllPets().then((value) {
       pets.addAll(value);
-      if (pets.value.isNotEmpty) {
+      if (pets.isNotEmpty) {
         if(indexLista.value <0 )
           {
             indexLista.value = 0;
           }
-        pet.value = pets.value.elementAt(indexLista.value);
-
+        pet.value = pets.elementAt(indexLista.value);
+        imgString.value = pet.value.foto;
         _daovacina.findAllVacinas(pet.value.id).then((value) {
           vacinas.addAll(value);
-          if(vacinas.value.isNotEmpty )
+          if(vacinas.isNotEmpty )
           {
-            vacina.value = vacinas.value.first;
+            vacina.value = vacinas.first;
           }
           update();
         });
         _daoaviso.findAllAvisos(pet.value.id).then((value) {
           avisos.addAll(value);
-          if(avisos.value.isNotEmpty )
+          if(avisos.isNotEmpty )
           {
-            aviso.value = avisos.value.first;
+            aviso.value = avisos.first;
           }
           update();
         });
@@ -311,14 +333,14 @@ class PetController extends GetxController {
 
   void navegaListAviso(int i) {
     indexAviso.value += i;
-    if ((avisos.value.length - 1) < indexAviso.value) {
-      indexAviso.value = avisos.value.length - 1;
+    if ((avisos.length - 1) < indexAviso.value) {
+      indexAviso.value = avisos.length - 1;
     } else if (indexAviso.value < 0) {
       indexAviso.value = 0;
     }
-    if(avisos.value.isNotEmpty)
+    if(avisos.isNotEmpty)
     {
-      aviso.value = avisos.value.elementAt(indexAviso.value);
+      aviso.value = avisos.elementAt(indexAviso.value);
     }
     update();
   }

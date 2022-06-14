@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:vetpet/componentes/editordate.dart';
 import 'package:vetpet/componentes/editortexto.dart';
 
-import 'package:vetpet/model/vacina.dart';
 import '../../componentes/cardpetselecionado.dart';
 import '../../constantes/constantes.dart';
 
 import '../../controller/avisocontroller.dart';
-import '../../controller/vacinacontroller.dart';
+
 import '../../model/aviso.dart';
 import '../../model/globals.dart' as globals;
 import 'package:get/get.dart';
@@ -24,6 +22,8 @@ class CadastroAviso extends StatelessWidget {
   late Aviso aviso = Aviso(0, globals.idpetsel, "", "", "", "");
   late bool buscaaviso = true;
   final avisoController = Get.put(AvisoController());
+
+  CadastroAviso({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class CadastroAviso extends StatelessWidget {
                           dica: "Nome do Aviso",
                           icone: Icons.medical_services,
                           obrigatorio: true,
-                          listaOP: 1),
+                          listaOP: 2),
                       EditorDate(avisoController.controladordatacadastro,
                           rotulo: "Data da Aplicação",
                           dica: "DD/MM/YYYY",

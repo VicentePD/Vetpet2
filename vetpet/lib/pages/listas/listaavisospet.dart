@@ -5,10 +5,10 @@ import '../../componentes/cardpetselecionado.dart';
 import '../../componentes/iconebotao.dart';
 import '../../constantes/constantes.dart';
 import '../../controller/avisocontroller.dart';
-import '../../controller/vacinacontroller.dart';
+
 import 'package:get/get.dart';
 import '../../model/aviso.dart';
-import '../../model/vacina.dart';
+
 
 
 
@@ -29,7 +29,7 @@ class ListaAvisosPet extends StatelessWidget {
           avisocontroller.idaviso.value = 0;
           avisocontroller.limparCamposTela();
           Get.toNamed('/cadastroAviso');
-        }),],
+        }),const SizedBox(width: 8)],
           title: const Text("Lista Avisos", semanticsLabel: "Lista Avisos",),
           backgroundColor: COLOR_ORANGE,
         ),

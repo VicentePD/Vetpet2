@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../componentes/avatarpet.dart';
 import '../../constantes/constantes.dart';
 import '../../controller/petcontroller.dart';
 import '../../help/imagemutil.dart';
@@ -22,6 +23,7 @@ class ListaPetsCadastrados extends StatelessWidget {
   Widget build(BuildContext context) {
     return
       Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: const Text("Lista Pet", semanticsLabel: "Lista Pet",),
           backgroundColor: COLOR_ORANGE,
@@ -59,14 +61,7 @@ class ListaPetsCadastrados extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         ListTile(
-                          leading: CircleAvatar(
-                            radius: 25,
-                            backgroundColor: const Color(0xffFDCF09),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(25),
-                                child: ImageUtility.imageFromBase64String(
-                                    pet.foto)),
-                          ),
+                          leading: AvatarPet( ImageUtility.imageFromBase64String( pet.foto).image ),
                           title: Text("Nome:" +
                               pet.nome.toString()),
                           subtitle: Text("Data Nascimento:" +

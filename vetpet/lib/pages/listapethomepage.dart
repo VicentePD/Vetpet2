@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../componentes/avatarpet.dart';
 import '../componentes/iconebotao.dart';
 import '../constantes/constantes.dart';
 import '../controller/petcontroller.dart';
@@ -142,14 +143,15 @@ class ListaPetHomePage extends StatelessWidget {
 
   Future<void> _pullRefresh() async {
     petController.refreshPage();
-    return Future<void>.delayed(const Duration(seconds: 3));
+    return Future<void>.delayed(const Duration(seconds: 2));
   }
 
   incluirPet() {
-    return const IconeBotao(icone: Icons.add, rotulo: "Incluir").bt(() => {
+    return const IconeBotao(icone: Icons.add, rotulo: "Incluir").bt(()  {
+      petController.limparcamposForm();
           Get.toNamed('/cadastroPet', arguments: [
             {'idpet': '0'}
-          ])
+          ]);
         });
   }
 
@@ -196,14 +198,7 @@ class ListaPetHomePage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ListTile(
-          leading: CircleAvatar(
-            radius: 25,
-            backgroundColor: const Color(0xffFDCF09),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(25),
-                child: ImageUtility.imageFromBase64String(
-                    petController.pet.value.foto)),
-          ),
+          leading: AvatarPet( ImageUtility.imageFromBase64String( petController.pet.value.foto ).image) ,
           title: Text("Nome:" + petController.pet.value.nome.toString()),
           subtitle: Text("Data Nascimento:" +
               petController.pet.value.datanascimento.toString() +
@@ -267,14 +262,13 @@ class ListaPetHomePage extends StatelessWidget {
                          });
                   }
                   else{
-                    Get.toNamed('/cadastroVacina');
-                    petController.refreshVacina();
+                    Get.toNamed('/cadastroVacina')?.then((value) =>  _pullRefresh());
                   }
 
                 }),
                  const SizedBox(width: 5),
                 const IconeBotao(icone: Icons.list_alt, rotulo: "List.").bt(() {
-                  Get.toNamed('/listarVacinasPet');
+                  Get.toNamed('/listarVacinasPet')?.then((value) =>  _pullRefresh());
                 }),
                 const SizedBox(width: 5),
                 petController.vacinas.value.length >1?  const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {
@@ -329,13 +323,12 @@ class ListaPetHomePage extends StatelessWidget {
                         });
                   }
                   else{
-                    Get.toNamed('/cadastroAviso');
-                    petController.refreshVacina();
+                    Get.toNamed('/cadastroAviso')?.then((value) =>  _pullRefresh());
                   }
                 }),
                 const SizedBox(width: 5),
                 const IconeBotao(icone: Icons.list_alt, rotulo: "List.").bt(() {
-                  Get.toNamed('/listarAvisosPet');
+                  Get.toNamed('/listarAvisosPet')?.then((value) =>  _pullRefresh());
                 }),
                 const SizedBox(width: 5),
                 petController.avisos.value.length > 1 ?const IconeBotao(icone: Icons.arrow_forward, rotulo: "Prox.").bt(() {

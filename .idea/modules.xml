@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/vetpet/vetpet.iml" filepath="$PROJECT_DIR$/vetpet/vetpet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vetpet/android/vetpet_android.iml" filepath="$PROJECT_DIR$/vetpet/android/vetpet_android.iml" />
     </modules>
   </component>
 </project>

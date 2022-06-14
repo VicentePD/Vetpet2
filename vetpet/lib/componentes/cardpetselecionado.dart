@@ -2,11 +2,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../constantes/constantes.dart';
 import '../help/imagemutil.dart';
-import 'iconebotao.dart';
+import 'avatarpet.dart';
+
 import '../../model/globals.dart' as globals;
-import 'package:get/get.dart';
+
 
 class CardPetSelecionado extends StatelessWidget {
 
@@ -18,14 +18,7 @@ class CardPetSelecionado extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ListTile(
-              leading: CircleAvatar(
-                radius: 25,
-                backgroundColor: const Color(0xffFDCF09),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(25),
-                    child: ImageUtility.imageFromBase64String(
-                        globals.fotopetsel)),
-              ),
+              leading: AvatarPet( ImageUtility.imageFromBase64String( globals.fotopetsel ).image)  ,
               title: Text("Nome:" + globals.nomepetsel),
               subtitle: Text("Data Nascimento:" +
                   globals.datanascimentopet ),
